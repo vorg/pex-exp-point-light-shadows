@@ -29,9 +29,10 @@ var ShowColors = materials.ShowColors;
 
 sys.Window.create({
   settings: {
-    width: 1024,
-    height: 512,
-    type: '3d'
+    width: 1600,
+    height: 800,
+    type: '3d',
+    fullscreen: sys.Platform.isBrowser
   },
   init: function() {
     this.lightMesh = new Mesh(new Sphere(0.1), new SolidColor({ color: Color.White }));
@@ -101,7 +102,13 @@ sys.Window.create({
     this.lineBuilder.addLine(bottom.position, bottom.target);
   },
   initMaterials: function() {
-    this.depthBuffer = Texture2D.create(this.width, this.height, { format: this.gl.DEPTH_COMPONENT, type: this.gl.UNSIGNED_SHORT });
+    this.depthBuffer = Texture2D.create(Math.floor(1024), Math.floor(512), { format: this.gl.DEPTH_COMPONENT, type: this.gl.UNSIGNED_SHORT });
+    this.depthBuffer.bind();
+    var gl = this.gl;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     this.showNormals = new ShowNormals();
     this.showDepth = new ShowDepth();
   },
@@ -154,8 +161,8 @@ sys.Window.create({
     var meshes = this.scene;
     var camera = this.camera;
     var lights = [this.lightMesh];
-    var W = this.width;
-    var H = this.height;
+    var W = 1024;
+    var H = 512;
 
     var root = fx();
     var albedo = root.render({ drawFunc: function() { this.drawAlbedo(meshes, camera, lights); }.bind(this), depth: this.depthBuffer, width: W, height: H });
@@ -169,7 +176,7 @@ sys.Window.create({
       lightCamera.target.setVec3(this.lightMesh.position.dup().add(this.targets[cameraIndex]))
       lightCamera.updateMatrices();
       this.lineBuilder.addLine(lightCamera.position, lightCamera.target);
-      return root.render({ drawFunc: function() { this.drawDepth(meshes, lightCamera); }.bind(this), depth: true, width: H, height: H, bpp: 32 });
+      return root.render({ drawFunc: function() { this.drawDepth(meshes, lightCamera); }.bind(this), depth: true, width: H, height: H });
     }.bind(this));
 
     var shadow1 = albedo.shadowMap({
@@ -220,11 +227,11 @@ sys.Window.create({
     this.boxMesh.rotation = Quat.fromAxisAngle(new Vec3(0, 1, 0), Time.seconds * 50)
     this.box2Mesh.rotation = Quat.fromAxisAngle(new Vec3(0, 1, 0), -Time.seconds * 50)
 
-    var light = root.render({ drawFunc: function() { this.drawLight(meshes, camera, lights); }.bind(this), depth: this.depthBuffer, width: W, height: H, bpp: 32 });
-    light.blit();
+    var light = root.render({ drawFunc: function() { this.drawLight(meshes, camera, lights); }.bind(this), depth: this.depthBuffer, width: W, height: H });
+    //light.blit();
 
     var finalColor = shadow6.add(light);
-    finalColor.blit();
+    finalColor.blit({ width: this.width, height: this.height });
 
     //this.lineMesh.draw(this.camera);
   }
