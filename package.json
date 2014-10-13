@@ -1,0 +1,25 @@
+{
+  "name": "pointLightShadows",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "brfs": "^1.2.0",
+    "browser-sync": "^1.5.8",
+    "browserify": "^6.1.0",
+    "merge": "^1.2.0",
+    "pex-color": "0.1.0",
+    "pex-fx": "0.0.5",
+    "pex-gen": "0.0.3",
+    "pex-geom": "0.5.0",
+    "pex-glu": "0.0.10",
+    "pex-gui": "0.2.0",
+    "pex-helpers": "0.0.2",
+    "pex-materials": "0.0.9",
+    "pex-sys": "0.0.5",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.0.0"
+  },
+  "scripts": {
+    "watch": "./lib/watchscript.js"
+  }
+}
