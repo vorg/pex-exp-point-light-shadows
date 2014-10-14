@@ -152,6 +152,10 @@ sys.Window.create({
   draw: function() {
     Time.verbose = true;
 
+    //this.gl.getSupportedExtensions().forEach(function(e) {
+    //  console.log(e, this.gl.getExtension(e));
+    //}.bind(this));
+
     glu.clearColorAndDepth(Color.Red);
     glu.enableDepthReadAndWrite(true);
 
@@ -176,7 +180,7 @@ sys.Window.create({
       lightCamera.target.setVec3(this.lightMesh.position.dup().add(this.targets[cameraIndex]))
       lightCamera.updateMatrices();
       this.lineBuilder.addLine(lightCamera.position, lightCamera.target);
-      return root.render({ drawFunc: function() { this.drawDepth(meshes, lightCamera); }.bind(this), depth: true, width: H, height: H });
+      return root.render({ drawFunc: function() { this.drawDepth(meshes, lightCamera); }.bind(this), depth: true, width: H, height: H, bpp: 32 });
     }.bind(this));
 
     var shadow1 = albedo.shadowMap({
